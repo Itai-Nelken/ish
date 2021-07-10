@@ -16,7 +16,7 @@ char **get_input(char *input) {
     char *parsed;
     int index=0;
 
-    //strotk returns the first word in 'input' before the space
+    //strtok returns the first word in 'input' before the space
     parsed=strtok(input, separator);
     //while that word isn't NULL
     while(parsed!=NULL) {
@@ -30,14 +30,13 @@ char **get_input(char *input) {
 }
 
 int cd(char **args) {
-    if(!strcmp(args[1], "~")) {
-        strcpy(args[1], "/home");
-    }
-    if(!args[1]) {
+    if(args[1]==NULL) {
         fprintf(stderr, "ish: cd: expected argument!\n");
     } else {
         if(chdir(args[1])!=0) {
             perror("ish");
+        } else {
+            return 0;
         }
     }
     return 1;
@@ -64,18 +63,17 @@ int main(int argc, char **argv) {
         command=get_input(input); //parse the input and save save it in 'command'
         add_history(input);
 
-        //handel builtin shell commands
-        if(!strcmp(command[0], "cd")) {
+        //handle builtin shell commands
+        if(command[0]) {
+            if(!strcmp(command[0], "cd")) {
             cd(command);
             prompt_refresh(prompt);
             continue;
-        } else if(!strcmp(command[0], "exit")) {
-            printf("exit\n");
-            exit=1;
-            continue;
-        } else if(!strcmp(command[0], "echo")||!strcmp(command[0], "printf")&&!strcmp(command[1], "$?")) {
-            printf("%d\n", stat_loc);
-            continue;
+            } else if(!strcmp(command[0], "exit")) {
+                printf("exit\n");
+                exit=1;
+                continue;
+            }
         }
 
         //fork the shell process
