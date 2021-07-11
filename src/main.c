@@ -78,12 +78,14 @@ void prompt_refresh(char *prompt) {
 
 int main(int argc, char **argv) {
     //handle command line arguments (when shell isn't running)
-    if(!strcmp(argv[1], "--help")) {
-        help();
-        return 0;
-    } else if(!strcmp(argv[1], "--about")) {
-        about();
-        return 0;
+    if(argv[1]) {
+        if(!strcmp(argv[1], "--help")) {
+            help();
+            return 0;
+        } else if(!strcmp(argv[1], "--about")) {
+            about();
+            return 0;
+        }
     }
 
     char **command;
