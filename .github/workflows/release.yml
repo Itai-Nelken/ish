@@ -15,6 +15,7 @@ jobs:
         run: |
           DEBIAN_FRONTEND=noninteractive sudo apt update
           DEBIAN_FRONTEND=noninteractive sudo apt -y install build-essential
+          DEBIAN_FRONTEND=noninteractive sudo apt install -y libreadline-dev
       - name: Configure
         run: |
           mkdir build
@@ -49,6 +50,7 @@ jobs:
             DEBIAN_FRONTEND=noninteractive apt update
             DEBIAN_FRONTEND=noninteractive apt install build-essential -y
             DEBIAN_FRONTEND=noninteractive apt install cmake gcc make -y
+            DEBIAN_FRONTEND=noninteractive apt install -y libreadline-dev
             mkdir build
             cd build
             cmake -DCMAKE_BUILD_TYPE=Release ..
