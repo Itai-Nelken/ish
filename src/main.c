@@ -6,6 +6,7 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 #include <sys/wait.h>
+#define VER "0.1"
 
 char **get_input(char *input) {
     //will hold the command
@@ -29,16 +30,42 @@ char **get_input(char *input) {
     return command;
 }
 
+void about() {
+    printf("#### ish shell, version %s ####\n================================\n\n", VER);
+    printf("Author: Itai Nelken\n");
+    printf("Copyright (c) 2021 Itai Nelken\n");
+    printf("License: MIT\n");
+}
+
+void help() {
+    printf(" ish shell version %s \n======================\n\n", VER);
+    printf("BUILT-IN COMMANDS:\n- cd [path]\n- about\n- help\n");
+    printf("Type the path to a program or only its name\nif it is in your PATH to run it\n");
+}
+
 int cd(char **args) {
+    //char temp[500], *path=malloc(sizeof(args[1])+1), *home=getenv("HOME");
+    //int i;
     if(args[1]==NULL) {
         fprintf(stderr, "ish: cd: expected argument!\n");
     } else {
+        /****************** pointer to first '~' from this loop
+        for(i=0; i<sizeof(args[1]); i++) {
+            strcpy(path, "");
+            sprintf(path, "%c", args[1][i]);
+            if(!strcmp(path, "~")) {
+                break;
+            }
+        }
+        ********************/
+        //printf("path: %s\n", path);
         if(chdir(args[1])!=0) {
             perror("ish");
         } else {
             return 0;
         }
     }
+    //free(path);
     return 1;
 }
 
@@ -50,6 +77,15 @@ void prompt_refresh(char *prompt) {
 }
 
 int main(int argc, char **argv) {
+    //handle command line arguments (when shell isn't running)
+    if(!strcmp(argv[1], "--help")) {
+        help();
+        return 0;
+    } else if(!strcmp(argv[1], "--about")) {
+        about();
+        return 0;
+    }
+
     char **command;
     char *input;
     pid_t child_pid; //pid_t==int
@@ -66,12 +102,18 @@ int main(int argc, char **argv) {
         //handle builtin shell commands
         if(command[0]) {
             if(!strcmp(command[0], "cd")) {
-            cd(command);
-            prompt_refresh(prompt);
-            continue;
+                cd(command);
+                prompt_refresh(prompt);
+                continue;
             } else if(!strcmp(command[0], "exit")) {
                 printf("exit\n");
                 exit=1;
+                continue;
+            } else if(!strcmp(command[0], "about")) {
+                about();
+                continue;
+            } else if(!strcmp(command[0], "help")) {
+                help();
                 continue;
             }
         }
