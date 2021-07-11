@@ -12,8 +12,8 @@ jobs:
 
       - name: Install Dependencies
         run: |
-          sudo apt update
-          sudo apt -y install build-essential
+          DEBIAN_FRONTEND=noninteractive sudo apt update
+          DEBIAN_FRONTEND=noninteractive sudo apt -y install build-essential
       - name: Configure
         run: |
           mkdir build
@@ -27,7 +27,7 @@ jobs:
         run: |
           cd build
           cpack -G DEB
-          cpack -G STGZ
+          sudo cpack -G STGZ
           echo "DEB=$(basename *.deb)" >> $GITHUB_ENV
           echo "STGZ=$(basename *.sh)" >> $GITHUB_ENV
       - name: Upload to release
