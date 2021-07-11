@@ -37,33 +37,3 @@ jobs:
         with:
           file: 'build/${{ env.DEB }}'
           type: 'application/x-dedian-package'
-
-  build-arm64:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: darsvador/run-on-arch-action@v1.0.10
-        with:
-          architecture: aarch64
-          distribution: ubuntu20.04
-          run: |
-            DEBIAN_FRONTEND=noninteractive apt update
-            DEBIAN_FRONTEND=noninteractive apt install build-essential -y
-            DEBIAN_FRONTEND=noninteractive apt install cmake gcc make -y
-            DEBIAN_FRONTEND=noninteractive apt install -y libreadline-dev
-            mkdir build
-            cd build
-            cmake -DCMAKE_BUILD_TYPE=Release ..
-            make
-
-      - name: get deb name
-        run: |
-          cd build
-          echo "DEB=$(basename *.deb)" >> $GITHUB_ENV
-      - name: upload
-        uses: gacts/upload-to-release@v1.0.1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          file: 'build/$${{ env.DEB }}'
-          type: 'application/x-debian-package'
