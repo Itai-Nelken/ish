@@ -39,7 +39,7 @@ jobs:
           type: 'application/x-dedian-package'
 
   build-arm64:
-    runs-on:  pi-builder-arm64
+    runs-on:  self-hosted
     steps:
       - name: Checkout
         uses: actions/checkout@v2
