@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
   release:
     types:
-    - created
+      - created
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -47,19 +47,21 @@ jobs:
           distribution: ubuntu20.04
           run: |
             DEBIAN_FRONTEND=noninteractive apt update
-            DEBIAN_FRONTEND=noninteractive apt install build-essential cmake gcc make -y
+            DEBIAN_FRONTEND=noninteractive apt install build-essential -y
+            DEBIAN_FRONTEND=noninteractive apt install cmake gcc make -y
             mkdir build
             cd build
             cmake -DCMAKE_BUILD_TYPE=Release ..
             make
-        - name: get deb name
-          run: |
-            cd build
-            echo "DEB=$(basename *.deb)" >> $GITHUB_ENV
-        - name: upload
-          uses: gacts/upload-to-release@v1.0.1
-          env:
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          with:
-            file: 'build/$${{ env.DEB }}'
-            type: 'application/x-debian-package'
+
+      - name: get deb name
+        run: |
+          cd build
+          echo "DEB=$(basename *.deb)" >> $GITHUB_ENV
+      - name: upload
+        uses: gacts/upload-to-release@v1.0.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          file: 'build/$${{ env.DEB }}'
+          type: 'application/x-debian-package'
