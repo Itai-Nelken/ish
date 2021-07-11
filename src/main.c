@@ -7,6 +7,10 @@
 #include <readline/history.h>
 #include <sys/wait.h>
 #define VER "0.1"
+ 
+#warning  "BUG: prompt overwrite issue when entering long commands..."
+#warning  "TODO: maybe integrate DollarSkip???"
+ 
 
 char **get_input(char *input) {
     //will hold the command
@@ -125,7 +129,7 @@ int main(int argc, char **argv) {
         if(child_pid==0) { //when the child process gets here, its 'child_pid' is 0 because it has no child
             if(execvp(command[0], command)==-1) { //run the command (execvp returns (-1) only if the process failed)
                 perror("ish"); //error handling
-                exit=1; //set exit to 1 for 'if' statement a t the end of the loop
+                exit=1; //set exit to 1 for 'if' statement at the end of the loop
             }
         } else if(child_pid<0) {
             perror("ish");
