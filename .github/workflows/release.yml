@@ -36,14 +36,13 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           file: 'build/${{ env.DEB }}'
-          type: 'application/x-dedian-package'
+          type: 'application/x-debian-package'
 
   build-arm64:
     runs-on:  self-hosted
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-
       - name: Install Dependencies
         run: |
           DEBIAN_FRONTEND=noninteractive sudo apt update
@@ -69,4 +68,4 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           file: 'build/${{ env.DEB }}'
-          type: 'application/x-dedian-package'
+          type: 'application/x-debian-package'
