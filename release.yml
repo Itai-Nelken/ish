@@ -1,0 +1,40 @@
+name: publish
+on:
+  release:
+    types:
+    - created
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Install Dependencies
+        run: |
+          sudo apt update
+          sudo apt -y install build-essential
+      - name: Configure
+        run: |
+          mkdir build
+          cd build
+          cmake -DCMAKE_BUILD_TYPE=Release ..
+      - name: Build
+        run: |
+          cd build
+          make
+      - name: Package
+        run: |
+          cd build
+          cpack -G DEB
+          cpack -G STGZ
+          echo "DEB=$(basename *.deb)" >> $GITHUB_ENV
+          echo "STGZ=$(basename *.sh)" >> $GITHUB_ENV
+      - name: Upload to release
+        uses: gacts/upload-to-release@v1.0.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          file: 'build/${{ env.DEB }}'
+          type: 'application/x-dedian-package'
+    
