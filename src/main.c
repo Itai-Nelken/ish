@@ -3,13 +3,14 @@
 #include <string.h>
 #include <unistd.h>
 #include <errno.h>
+#include <signal.h>
 #include <readline/readline.h>
 #include <readline/history.h>
 #include <sys/wait.h>
-#define VER "0.1"
 
-#warning  "TODO: maybe integrate DollarSkip???"
- 
+#define VER "0.1"
+//pointer that will point to 'child_pid' in the main function for signal handler
+pid_t *child;
 
 char **get_input(char *input) {
     //will hold the command
@@ -82,7 +83,24 @@ void prompt_refresh(char *prompt) {
     sprintf(prompt, "\001\e[1;32m\002%s@%s\001\e[0m\002:\001\e[1;34m\002%s $\001\e[0m\002 ", user, hostname, pwd);
 }
 
+#warning I know I shouldn'y use printf or any of the functions I'm calling in a signal handler... but it is the only way I have found to make it work the way I want...
+void sigint_handler(pid_t sig) {
+    char prompt[2048]="", *newline="\n";
+    prompt_refresh(prompt);
+    if(*child!=0) {
+        kill(*child, SIGKILL);
+        printf("\n");
+    } else {
+        //write(STDOUT_FILENO, newline, sizeof(newline));
+        //write(STDOUT_FILENO, prompt, sizeof(prompt));
+        printf("\n");
+        printf("%s", prompt);
+    }
+}
+
 int main(int argc, char **argv) {
+    //handle ctrl+c (SIGINT)
+    signal(SIGINT, sigint_handler);
     //handle command line arguments (when shell isn't running)
     if(argv[1]) {
         if(!strcmp(argv[1], "--help")) {
@@ -97,6 +115,7 @@ int main(int argc, char **argv) {
     char **command;
     char *input;
     pid_t child_pid; //pid_t==int
+    child=&child_pid;
     int stat_loc, exit=0;
     char prompt[2048];
     prompt_refresh(prompt);
@@ -138,6 +157,7 @@ int main(int argc, char **argv) {
             perror("ish");
         } else {
             waitpid(child_pid, &stat_loc, WUNTRACED); //parent process waits until child has finished
+            child_pid=0;
         }
 
         //free input and command memory
