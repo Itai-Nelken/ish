@@ -30,7 +30,7 @@ make
 
 ### Installing:
 
-To install to /usr/loca/bin, run the command `sudo make install`.
+To install to /usr/local/bin, run the command `sudo make install`.
 
 ### Optional - Packaging:
 
