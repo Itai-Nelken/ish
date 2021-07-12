@@ -4,7 +4,7 @@
 
 ### To install for Debian/Ubuntu based distributions:
 
-To download for Debian/Ubuntu based distributions, simply go to Github [releases](https://github.com/Itai-Nelken/ish/releases) and install the package through dpkg or apt.
+To download for Debian/Ubuntu based distributions, simply go to Github [releases](https://github.com/Itai-Nelken/ish/releases/latest) and install the package through dpkg or apt.
 
 ### To compile from source:
 
