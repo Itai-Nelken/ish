@@ -43,7 +43,8 @@ void about() {
 
 void help() {
     printf(" ish shell version %s \n======================\n\n", VER);
-    printf("BUILT-IN COMMANDS:\n- cd [path]\n- about\n- help\n");
+    printf("BUILT-IN COMMANDS:\n- cd [path]\n- about\n- help\n- history\n");
+    printf("   arguments:\n    --clear - clear history\n    --last - print last line in history\n");
     printf("Type the path to a program or only its name\nif it is in your PATH to run it\n");
 }
 
@@ -119,11 +120,14 @@ int main(int argc, char **argv) {
     int stat_loc, exit=0;
     char prompt[2048];
     prompt_refresh(prompt);
+    using_history();
 
     //while exit isn't 1, run the code inside the loop
     while(exit!=1) {
         input=readline(prompt); //display the prompt and get a line from the user. the line is saved in 'input'
-        add_history(input);
+        if(strcmp(input, "")) { //don't add blank lines to history
+            add_history(input);
+        }
         command=get_input(input); //parse the input and save save it in 'command'
 
         //shell features and stuff handling
@@ -142,6 +146,27 @@ int main(int argc, char **argv) {
                 continue;
             } else if(!strcmp(command[0], "help")) {
                 help();
+                continue;
+            } else if(!strcmp(command[0], "history")) {
+                if(command[1]) {
+                    if(!strcmp(command[1], "--clear")) {
+                        clear_history();
+                    } else if(!strcmp(command[1], "--last")) {
+                        HIST_ENTRY *entry=history_get(where_history());
+                        if(entry) {
+                            printf("%s\n", entry->line);
+                        }
+                        free(entry);
+                    }
+                } else {
+                    HISTORY_STATE  *hist_state=history_get_history_state();
+                    HIST_ENTRY **history=history_list();
+                    for(int i=0; i<hist_state->length; i++) {
+                        printf(" %s %s\n", history[i]->line, history[i]->timestamp);     
+                    }
+                    free(hist_state);
+                    //free(history); //'aborted' if uncommented
+                }
                 continue;
             }
         }
