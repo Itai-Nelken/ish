@@ -8,7 +8,7 @@ To download for Debian/Ubuntu based distributions, simply go to Github [releases
 
 ### To compile from source:
 
-This also works with Debian/Ubuntu based distributions however please use for distributions which don't use dpkg or apt.
+Compile from source when the `.deb` isn't useful for your distribution.
 
 ## Building:
 
