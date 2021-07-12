@@ -43,8 +43,7 @@ void about() {
 
 void help() {
     printf(" ish shell version %s \n======================\n\n", VER);
-    printf("BUILT-IN COMMANDS:\n- cd [path]\n- about\n- help\n- history\n");
-    printf("   arguments:\n    --clear - clear history\n    --last - print last line in history\n");
+    printf("BUILT-IN COMMANDS:\n- cd [path]\n- about\n- help\n- history [--clear | --last]\n");
     printf("Type the path to a program or only its name\nif it is in your PATH to run it\n");
 }
 
@@ -65,7 +64,7 @@ int cd(char **args) {
         ********************/
         //printf("path: %s\n", path);
         if(chdir(args[1])!=0) {
-            perror("ish");
+            perror("ish: cd");
         } else {
             return 0;
         }
@@ -84,7 +83,7 @@ void prompt_refresh(char *prompt) {
     sprintf(prompt, "\001\e[1;32m\002%s@%s\001\e[0m\002:\001\e[1;34m\002%s $\001\e[0m\002 ", user, hostname, pwd);
 }
 
-#warning I know I shouldn'y use printf or any of the functions I'm calling in a signal handler... but it is the only way I have found to make it work the way I want...
+#warning I know I shouldn't use printf or any of the functions I'm calling in a signal handler... but it is the only way I have found to make it work the way I want... PR welcome
 void sigint_handler(pid_t sig) {
     char prompt[2048]="", *newline="\n";
     prompt_refresh(prompt);
@@ -179,7 +178,7 @@ int main(int argc, char **argv) {
                 exit=1; //set exit to 1 for 'if' statement at the end of the loop
             }
         } else if(child_pid<0) {
-            perror("ish");
+            perror("ish: fork");
         } else {
             waitpid(child_pid, &stat_loc, WUNTRACED); //parent process waits until child has finished
             child_pid=0;
