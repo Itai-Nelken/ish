@@ -83,18 +83,18 @@ void prompt_refresh(char *prompt) {
     sprintf(prompt, "\001\e[1;32m\002%s@%s\001\e[0m\002:\001\e[1;34m\002%s $\001\e[0m\002 ", user, hostname, pwd);
 }
 
-#warning I know I shouldn't use printf or any of the functions I'm calling in a signal handler... but it is the only way I have found to make it work the way I want... PR welcome
+#warning I know I shouldn't use  any of the functions I'm calling other than write and fflush??? in a signal handler... but it is the only way I have found to make it work the way I want... PR welcome
 void sigint_handler(pid_t sig) {
-    char prompt[2048]="", *newline="\n";
+    char prompt[2048]="";
     prompt_refresh(prompt);
     if(*child!=0) {
         kill(*child, SIGKILL);
-        printf("\n");
+        write(STDOUT_FILENO, "\n", 1);
+        fflush(stdout);
     } else {
-        //write(STDOUT_FILENO, newline, sizeof(newline));
-        //write(STDOUT_FILENO, prompt, sizeof(prompt));
-        printf("\n");
-        printf("%s", prompt);
+        write(STDOUT_FILENO, "\n", 1);
+        write(STDOUT_FILENO, prompt, sizeof(prompt));
+        fflush(stdout);
     }
 }
 
