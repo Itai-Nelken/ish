@@ -8,7 +8,7 @@
 #include <readline/history.h>
 #include <sys/wait.h>
 
-#define VER "0.1"
+#define VER "0.2"
 //pointer that will point to 'child_pid' in the main function for signal handler
 pid_t *child;
 
