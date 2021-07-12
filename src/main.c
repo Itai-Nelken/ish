@@ -104,11 +104,12 @@ int main(int argc, char **argv) {
     //while exit isn't 1, run the code inside the loop
     while(exit!=1) {
         input=readline(prompt); //display the prompt and get a line from the user. the line is saved in 'input'
-        command=get_input(input); //parse the input and save save it in 'command'
         add_history(input);
+        command=get_input(input); //parse the input and save save it in 'command'
 
-        //handle builtin shell commands
+        //shell features and stuff handling
         if(command[0]) {
+            //handle built-in shell commands
             if(!strcmp(command[0], "cd")) {
                 cd(command);
                 prompt_refresh(prompt);
