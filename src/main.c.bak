@@ -8,9 +8,6 @@
 #include <sys/wait.h>
 #define VER "0.1"
 
-#warning  "TODO: maybe integrate DollarSkip???"
- 
-
 char **get_input(char *input) {
     //will hold the command
     char **command=malloc(sizeof(char *)*8);
@@ -76,10 +73,7 @@ void prompt_refresh(char *prompt) {
     char pwd[1024], hostname[1024], *user=getenv("USER");
     getcwd(pwd, sizeof(pwd));
     gethostname(hostname, sizeof(hostname));
-    // \001 = \[  \002 = \]
-    // used to tell readline that the characters between the \001 and \002 aren't displayed
-    // prevents the text overwriting the prompt issue.
-    sprintf(prompt, "\001\e[1;32m\002%s@%s\001\e[0m\002:\001\e[1;34m\002%s $\001\e[0m\002 ", user, hostname, pwd);
+    sprintf(prompt, "\e[1;32m%s@%s\e[0m:\e[1;34m%s $\e[0m ", user, hostname, pwd);
 }
 
 int main(int argc, char **argv) {
@@ -131,7 +125,7 @@ int main(int argc, char **argv) {
         if(child_pid==0) { //when the child process gets here, its 'child_pid' is 0 because it has no child
             if(execvp(command[0], command)==-1) { //run the command (execvp returns (-1) only if the process failed)
                 perror("ish"); //error handling
-                exit=1; //set exit to 1 for 'if' statement at the end of the loop
+                exit=1; //set exit to 1 for 'if' statement a t the end of the loop
             }
         } else if(child_pid<0) {
             perror("ish");
