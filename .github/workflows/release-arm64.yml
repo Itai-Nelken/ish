@@ -1,0 +1,39 @@
+name: publish-arm64
+on:
+  workflow_dispatch:
+  release:
+    types:
+      - created
+jobs:
+  build:
+    runs-on: self-hosted
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Install Dependencies
+        run: |
+          DEBIAN_FRONTEND=noninteractive sudo apt update
+          DEBIAN_FRONTEND=noninteractive sudo apt -y install build-essential
+          DEBIAN_FRONTEND=noninteractive sudo apt install -y libreadline-dev
+      - name: Configure
+        run: |
+          mkdir build
+          cd build
+          cmake -DCMAKE_BUILD_TYPE=Release ..
+      - name: Build
+        run: |
+          cd build
+          make
+      - name: Package
+        run: |
+          cd build
+          cpack -G DEB
+          echo "DEB=$(basename *.deb)" >> $GITHUB_ENV
+      - name: Upload to release
+        uses: gacts/upload-to-release@v1.0.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          file: 'build/${{ env.DEB }}'
+          type: 'application/x-debian-package'
