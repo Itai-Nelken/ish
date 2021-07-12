@@ -1,7 +1,7 @@
 # ish - a simple shell written in C
 
 ## Installing
-### Debian
+### Debian/Ubuntu
 check the latest release for debs
 ### Other Linux
 compile yourself for now
