@@ -1,27 +1,39 @@
 # ish - a simple shell written in C
 
 ## Installing
-### Debian/Ubuntu
-check the latest release for debs
-### Other Linux
-compile yourself for now
-## compiling
+
+### To install for Debian/Ubuntu based distributions:
+
+To download for Debian/Ubuntu based distributions, simply go to Github [releases](https://github.com/Itai-Nelken/ish/releases/latest) and install the package through dpkg or apt.
+
+### To compile from source:
+
+Compile from source when the `.deb` isn't useful for your distribution.
+
+## Building:
+
 **Dependencies:**
-- readline (debian & pacman package `libreadline-dev`)
-- A C compiler like `gcc`.
+
+- Readline - Install `libreadline-dev`
+- A C compiler like `gcc`
 - `make`
 - `Cmake` version 3.16 and later
 
-In the root of the `ish` folder, run:
-```
+While inside the root of the `ish` folder, run:
+
+```sh
 mkdir build
 cd build
 cmake ..
 make
 ```
-### Installing
-in the build folder run `sudo make install`
-### Packaging
-run the following in the `build` folder:
-- Debian package: `cpack -G DEB`
 
+### Installing:
+
+To install to /usr/local/bin, run the command `sudo make install`.
+
+### Optional - Packaging:
+
+While inside the `build` folder of `ish`, run: 
+
+- Debian package: `cpack -G DEB`
