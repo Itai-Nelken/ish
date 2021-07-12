@@ -20,5 +20,7 @@
 
 ## 12/7/2021
 - Fix prompt being overwritten when entering a long line of text to the shell.
+- add (admitedly horendous) SIGINT (CTRL+C) handling so the shell kills the child process but keeps itself running.
+- Release v0.2-alpha!
 
 **
