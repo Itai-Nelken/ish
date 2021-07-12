@@ -1,6 +1,5 @@
 name: publish-x64
 on:
-  workflow_dispatch:
   release:
     types:
       - created
