@@ -82,18 +82,18 @@ void prompt_refresh(char *prompt) {
     sprintf(prompt, "\001\e[1;32m\002%s@%s\001\e[0m\002:\001\e[1;34m\002%s $\001\e[0m\002 ", getenv("USER"), hostname, getcwd(NULL, 0));
 }
 
-#warning I know I shouldn't use printf or any of the functions I'm calling in a signal handler... but it is the only way I have found to make it work the way I want... PR welcome
+#warning I know I shouldn't use  any of the functions I'm calling other than write and fflush??? in a signal handler... but it is the only way I have found to make it work the way I want... PR welcome
 void sigint_handler(pid_t sig) {
-    char prompt[2048]="", *newline="\n";
+    char prompt[2048]="";
     prompt_refresh(prompt);
     if(*child!=0) {
         kill(*child, SIGKILL);
-        printf("\n");
+        write(STDOUT_FILENO, "\n", 1);
+        fflush(stdout);
     } else {
-        //write(STDOUT_FILENO, newline, sizeof(newline));
-        //write(STDOUT_FILENO, prompt, sizeof(prompt));
-        printf("\n");
-        printf("%s", prompt);
+        write(STDOUT_FILENO, "\n", 1);
+        write(STDOUT_FILENO, prompt, sizeof(prompt));
+        fflush(stdout);
     }
 }
 
@@ -125,6 +125,8 @@ int main(int argc, char **argv) {
         input=readline(prompt); //display the prompt and get a line from the user. the line is saved in 'input'
         if(strcmp(input, "")) { //don't add blank lines to history
             add_history(input);
+        } else { //reusing already existing check: if no commands provided, go straight to printing the next prompt
+            continue;
         }
         command=get_input(input); //parse the input and save save it in 'command'
 
