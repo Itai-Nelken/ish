@@ -43,7 +43,7 @@ void about() {
 
 void help() {
     printf(" ish shell version %s \n======================\n\n", VER);
-    printf("BUILT-IN COMMANDS:\n- cd [path]\n- about\n- help\n- history [--clear | --last]\n");
+    printf("BUILT-IN COMMANDS:\n- cd [path]\n- about\n- help\n- history [--clear | --last]\n- pwd\n");
     printf("Type the path to a program or only its name\nif it is in your PATH to run it\n");
 }
 
@@ -74,13 +74,12 @@ int cd(char **args) {
 }
 
 void prompt_refresh(char *prompt) {
-    char pwd[1024], hostname[1024], *user=getenv("USER");
-    getcwd(pwd, sizeof(pwd));
+    char hostname[1024];
     gethostname(hostname, sizeof(hostname));
     // \001 = \[  \002 = \]
     // used to tell readline that the characters between the \001 and \002 aren't displayed
     // prevents the text overwriting the prompt issue.
-    sprintf(prompt, "\001\e[1;32m\002%s@%s\001\e[0m\002:\001\e[1;34m\002%s $\001\e[0m\002 ", user, hostname, pwd);
+    sprintf(prompt, "\001\e[1;32m\002%s@%s\001\e[0m\002:\001\e[1;34m\002%s $\001\e[0m\002 ", getenv("USER"), hostname, getcwd(NULL, 0));
 }
 
 #warning I know I shouldn't use printf or any of the functions I'm calling in a signal handler... but it is the only way I have found to make it work the way I want... PR welcome
@@ -145,6 +144,9 @@ int main(int argc, char **argv) {
                 continue;
             } else if(!strcmp(command[0], "help")) {
                 help();
+                continue;
+            } else if(!strcmp(command[0], "pwd")) {
+                printf("%s\n", getcwd(NULL, 0));
                 continue;
             } else if(!strcmp(command[0], "history")) {
                 if(command[1]) {
