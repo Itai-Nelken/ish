@@ -43,7 +43,7 @@ void about() {
 
 void help() {
     printf(" ish shell version %s \n======================\n\n", VER);
-    printf("BUILT-IN COMMANDS:\n- cd [path]\n- about\n- help\n- history [--clear | --last]\n- pwd\n");
+    printf("BUILT-IN COMMANDS:\n- cd [path]\n- about\n- help\n- history [--clear]\n- pwd\n");
     printf("Type the path to a program or only its name\nif it is in your PATH to run it\n");
 }
 
@@ -93,6 +93,7 @@ void sigint_handler(pid_t sig) {
     } else {
         write(STDOUT_FILENO, "\n", 1);
         write(STDOUT_FILENO, prompt, sizeof(prompt));
+        //printf("\n%s", prompt);
         fflush(stdout);
     }
 }
@@ -112,7 +113,7 @@ int main(int argc, char **argv) {
     }
 
     char **command;
-    char *input;
+    char *input;//, *tmp;
     pid_t child_pid; //pid_t==int
     child=&child_pid;
     int stat_loc, exit=0;
@@ -150,16 +151,36 @@ int main(int argc, char **argv) {
             } else if(!strcmp(command[0], "pwd")) {
                 printf("%s\n", getcwd(NULL, 0));
                 continue;
+            //} else if(!strcmp(command[0], "ls")) {
+            //    free(command);
+            //    command=malloc(sizeof(char *)*8);
+            //    command[0]="ls";
+            //    command[1]="--color=auto";
+            //    int i=1, j=2;
+            //    char **cmd=malloc(sizeof(char *)*8);
+            //    printf("tmp: %s\n", tmp);
+            //    cmd=get_input(tmp);
+            //    while(cmd[i]!=NULL) {
+            //        command[j]=cmd[i];
+            //        i++;
+            //        j++;
+            //    }
+            //    free(cmd);
+            //    i++;
+            //    command[i]=NULL;
+            //} else if(!strcmp(command[0], "exec")) {
+            //
+            #warning TODO: exec
             } else if(!strcmp(command[0], "history")) {
                 if(command[1]) {
                     if(!strcmp(command[1], "--clear")) {
                         clear_history();
-                    } else if(!strcmp(command[1], "--last")) {
-                        HIST_ENTRY *entry=history_get(where_history());
-                        if(entry) {
-                            printf("%s\n", entry->line);
-                        }
-                        free(entry);
+                    //} else if(!strcmp(command[1], "--last")) {    //README: re-add [--last] flag to help when fixed here
+                    //   HIST_ENTRY *entry=history_get(where_history());
+                    //    if(entry) {
+                    //        printf("%s\n", entry->line);
+                    //    }
+                    //    free(entry);
                     }
                 } else {
                     HISTORY_STATE  *hist_state=history_get_history_state();
@@ -178,7 +199,7 @@ int main(int argc, char **argv) {
         child_pid=fork();
         if(child_pid==0) { //when the child process gets here, its 'child_pid' is 0 because it has no child
             if(execvp(command[0], command)==-1) { //run the command (execvp returns (-1) only if the process failed)
-                perror("ish"); //error handling
+                perror("ish: execvp"); //error handling
                 exit=1; //set exit to 1 for 'if' statement at the end of the loop
             }
         } else if(child_pid<0) {
