@@ -3,7 +3,11 @@ set(CMAKE_C_COMPILER gcc)
 project(ish VERSION 0.2 LANGUAGES C)
 
 add_executable(ish src/main.c)
-target_link_libraries(ish readline)
+if(APPLE)
+	message(FATAL_ERROR "ish doesn't compile on MacOS yet because of the readline library")
+else()
+	target_link_libraries(ish readline)
+endif()
 
 #install target
 install(
