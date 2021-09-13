@@ -21,26 +21,28 @@ install(
 	DESTINATION /usr/local/bin
 )
 
-execute_process(
-    COMMAND bash "-c" "echo $(od -An -t x1 -j 4 -N 1 \"$(readlink -f /sbin/init)\") | tr -d '\n'" 
-    OUTPUT_VARIABLE ARCH
-)
-if(${ARCH} STREQUAL 02)
-	set(TARGET_ARCH "aarch64")
-elseif(${ARCH} STREQUAL 01)
-	set(TARGET_ARCH "armv7l")
+if(NOT APPLE)
+	execute_process(
+	    COMMAND bash "-c" "echo $(od -An -t x1 -j 4 -N 1 \"$(readlink -f /sbin/init)\") | tr -d '\n'" 
+	    OUTPUT_VARIABLE ARCH
+	)
+	if(${ARCH} STREQUAL 02)
+		set(TARGET_ARCH "aarch64")
+	elseif(${ARCH} STREQUAL 01)
+		set(TARGET_ARCH "armv7l")
+	endif()
+	
+	if(NOT CPACK_GENERATOR)
+	       set(CPACK_GENERATOR "STGZ")
+	endif()
+	set(CPACK_PACKAGE_NAME "ish")
+	set(CPACK_PACKAGE_CONTACT "itainelken@gmail.com")
+	set(CPACK_PACKAGE_DESCRIPTION "A simple shell written in C")
+	set(CPACK_DEBIAN_PACKAGE_DEPENDS readline)
+	set(CPACK_VERSION_MAJOR ${CMAKE_PROJECT_VERSION_MAJOR})
+	set(CPACK_VERSION_MINOR ${CMAKE_PROJECT_VERSION_MINOR})
+	set(CPACK_VERSION_PATCH ${CMAKE_PROJECT_VERSION_PATCH})
+	set(CPACK_PACKAGE_VERSION ${CMAKE_PROJECT_VERSION})
+	set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}_Linux-${TARGET_ARCH}")
+	include(CPack)
 endif()
-
-if(NOT CPACK_GENERATOR)
-       set(CPACK_GENERATOR "STGZ")
-endif()
-set(CPACK_PACKAGE_NAME "ish")
-set(CPACK_PACKAGE_CONTACT "itainelken@gmail.com")
-set(CPACK_PACKAGE_DESCRIPTION "A simple shell written in C")
-set(CPACK_DEBIAN_PACKAGE_DEPENDS readline)
-set(CPACK_VERSION_MAJOR ${CMAKE_PROJECT_VERSION_MAJOR})
-set(CPACK_VERSION_MINOR ${CMAKE_PROJECT_VERSION_MINOR})
-set(CPACK_VERSION_PATCH ${CMAKE_PROJECT_VERSION_PATCH})
-set(CPACK_PACKAGE_VERSION ${CMAKE_PROJECT_VERSION})
-set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}_Linux-${TARGET_ARCH}")
-include(CPack)
