@@ -4,8 +4,12 @@
 #include <unistd.h>
 #include <errno.h>
 #include <signal.h>
+#ifdef APPLE
+#include "custom_readline.h"
+#else
 #include <readline/readline.h>
 #include <readline/history.h>
+#endif
 #include <sys/wait.h>
 
 #define VER "0.2"
@@ -119,17 +123,20 @@ int main(int argc, char **argv) {
     int stat_loc, exit=0;
     char prompt[2048];
     prompt_refresh(prompt);
+#ifndef APPLE
     using_history();
-
+#endif
     //while exit isn't 1, run the code inside the loop
     while(exit!=1) {
         input=readline(prompt); //display the prompt and get a line from the user. the line is saved in 'input'
-        if(strcmp(input, "")) { //don't add blank lines to history
+#ifndef APPLE
+	if(strcmp(input, "")) { //don't add blank lines to history
             add_history(input);
         } else { //reusing already existing check: if no commands provided, go straight to printing the next prompt
             continue;
         }
-        command=get_input(input); //parse the input and save save it in 'command'
+#endif
+	command=get_input(input); //parse the input and save save it in 'command'
 
         //shell features and stuff handling
         if(command[0]) {
@@ -169,7 +176,7 @@ int main(int argc, char **argv) {
             //    i++;
             //    command[i]=NULL;
             //} else if(!strcmp(command[0], "exec")) {
-            //
+#ifndef APPLE
             #warning TODO: exec
             } else if(!strcmp(command[0], "history")) {
                 if(command[1]) {
@@ -192,7 +199,8 @@ int main(int argc, char **argv) {
                     //free(history); //'aborted' if uncommented
                 }
                 continue;
-            }
+#endif
+	    }
         }
 
         //fork the shell process

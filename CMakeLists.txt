@@ -4,7 +4,13 @@ project(ish VERSION 0.2 LANGUAGES C)
 
 add_executable(ish src/main.c)
 if(APPLE)
-	message(FATAL_ERROR "ish doesn't compile on MacOS yet because of the readline library")
+	add_definitions(-DAPPLE)
+	#message(FATAL_ERROR "ish doesn't compile on MacOS yet because of the readline library")
+	add_library(custom_readline STATIC
+		src/custom_readline.c
+		src/custom_readline.h
+	)
+	target_link_libraries(ish custom_readline)
 else()
 	target_link_libraries(ish readline)
 endif()
