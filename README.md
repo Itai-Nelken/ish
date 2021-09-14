@@ -37,3 +37,6 @@ To install to /usr/local/bin, run the command `sudo make install`.
 While inside the `build` folder of `ish`, run: 
 
 - Debian package: `cpack -G DEB`
+
+## TODO
+- [ ] use different library for reading lines (custom? [linenoise](https://github.com/antirez/linenoise)?) because I want a static library that compiles fast.
