@@ -78,12 +78,14 @@ int cd(char **args) {
 }
 
 void prompt_refresh(char *prompt) {
-    char hostname[1024];
+    char hostname[1024] = {0};
+    char pwd[1024] = {0};
     gethostname(hostname, sizeof(hostname));
+    getcwd(pwd, sizeof(pwd));
     // \001 = \[  \002 = \]
     // used to tell readline that the characters between the \001 and \002 aren't displayed
     // prevents the text overwriting the prompt issue.
-    sprintf(prompt, "\001\e[1;32m\002%s@%s\001\e[0m\002:\001\e[1;34m\002%s $\001\e[0m\002 ", getenv("USER"), hostname, getcwd(NULL, 0));
+    sprintf(prompt, "\001\e[1;32m\002%s@%s\001\e[0m\002:\001\e[1;34m\002%s $\001\e[0m\002 ", getenv("USER"), hostname, pwd);
 }
 
 #warning I know I shouldn't use  any of the functions I'm calling other than write and fflush??? in a signal handler... but it is the only way I have found to make it work the way I want... PR welcome
