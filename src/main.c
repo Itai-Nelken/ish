@@ -51,6 +51,10 @@ void help() {
     printf("Type the path to a program or only its name\nif it is in your PATH to run it\n");
 }
 
+void clear_screen(void) {
+    printf("\033[3J\033[H\033[2J");
+}
+
 int cd(char **args) {
     //char temp[500], *path=malloc(sizeof(args[1])+1), *home=getenv("HOME");
     //int i;
@@ -157,6 +161,8 @@ int main(int argc, char **argv) {
             } else if(!strcmp(command[0], "help")) {
                 help();
                 continue;
+            } else if(!strcmp(command[0], "clear")) {
+                clear_screen();
             } else if(!strcmp(command[0], "pwd")) {
                 printf("%s\n", getcwd(NULL, 0));
                 continue;
